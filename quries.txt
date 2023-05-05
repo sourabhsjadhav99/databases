@@ -1,0 +1,41 @@
+blanck==> db.person.find({})
+condition==> db.person.find({  "name": 'Aurelia Gonzales',"gender":'female'})
+
+equal to==> db.person.find({  "index": {"$eq":'4'}})
+not equal to ==> db.person.find({  "name": {"$ne":'Aurelia Gonzales'}})
+less than==> db.person.find({  "age": {"$lt":24}})
+greater than==> db.person.find({  "age": {"$gt":24}})
+less than or equal to==> db.person.find({  "age": {"$lte":24}})
+greater than or equal to==> db.person.find({  "age": {"$gte":24}})
+greater than and less than==> db.person.find({  "age": {"$gt":24,"$lt":26}})
+
+
+in and nin ==> both requires array
+in==> db.person.find({  "age": {"$in":[26,27]}}).count()
+nin==> db.person.find({  "age": {"$nin":[26,27]}})
+
+$and ==> db.person.find({  "$and": [{"age": {"$eq":24}},{"name": {"$eq":  'Mcguire Vincent'}}]})
+can't use implicit when same fields db.person.find({ "age": {"$eq":24},"age": {"$eq":  '25'}})
+
+$or ==> db.person.find({  "$or": [{"age": {"$eq":24}},{"name": {"$eq":  'Mcguire Vincent'}}]})
+for same field name==>db.person.find({  "$or": [{"age": {$in:[24,25]}}]})
+
+embeded document (nested objects)
+db.person.find({ "company.location.country":"USA"})
+
+
+for array==>
+documents which contain ad as first element in tags array ==>db.person.find({ "tags.0":"ad"})
+documents which contain ad as first element in tags array ==>db.person.find({ "tags":{$all:["ad", "eu"]}})
+documents with size 4 in tags array ==>db.person.find({ "tags":{"$size":4}})
+
+----------------------
+db.students.insertOne({"name":"myke","friends":[{name:"lora", age:NumberInt(23), registered:true}, {name:"bob", age:NumberInt(25), registered:false},{name:"steve", age:NumberInt(27)}]})
+
+db.students.find({"friends.name":"lora"})
+db.students.find({"friends.name":"lora", "friends.age":23})
+
+db.students.find({"friends":{$elemMatch:{"name":"lora", "age":23}}})  //anyone field wrong then, will not get output
+
+
+$exists, $type

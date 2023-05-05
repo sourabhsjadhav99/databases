@@ -1,0 +1,444 @@
+to create database-->
+CREATE DATABASE students
+----------------------------------------------------------------------------------------------------------------
+to enter in DB-->
+use students
+----------------------------------------------------------------------------------------------------------------
+to create table-->
+CREATE TABLE student(
+    id INT,
+    name VARCHAR(30),
+    birthPlace VARCHAR(15),
+    age INT,
+    phone VARCHAR(10),
+    gender VARCHAR(10),
+)
+----------------------------------------------------------------------------------------------------------------
+insert single row in tables-->
+INSERT INTO student(id,name,birth,phone,gender)
+VALUES(1,"sourabh","1999-08-20","9874563214","M")
+
+insert multiple rows in tables-->
+INSERT INTO student(id,name,birthPlace,age,phone,gender)
+VALUES
+(1,"sourabjh","kolhapur",24,"9978496214","M"),
+(2,"sita","belgam",18,"9944865914","F"),
+(3,"raghav","agra",25,"9944896214","M"),
+(4,"balram","delhi",16,"9912696214","M"),
+(5,"radha","1mumbai",21,"9978496214","F"),
+(6,"krishna","pune",30,"9944865914","M")
+----------------------------------------------------------------------------------------------------------------
+to apply some restrictions on data-->
+CREATE TABLE student(
+    id INT NOT NULL UNIQUE,
+    name VARCHAR(30) NOT NULL,
+    age INT NOT NULL CHECK (age>=18),
+    phone VARCHAR(10) NOT NULL UNIQUE,
+    city VARCHAR(15) NOT NULL DEFAULT "AGRA"
+)
+----------------------------------------------------------------------------------------------------------------
+
+show data from tables-->
+SELECT id ,name ,phone FROM student
+all data --> 
+SELECT * FROM student
+----------------------------------------------------------------------------------------------------------------
+change column name when we show data-->
+SELECT id AS ID,name AS Name,phone AS Mob FROM student
+if space between name then write it in " "-->
+name AS "student name" FROM student
+----------------------------------------------------------------------------------------------------------------
+select data with condition--> =,<,>,>=,<=,!=,BETWEEN,LIKE,IN
+SELECT * FROM student
+WHERE city="AGRA"
+----------------------------------------------------------------------------------------------------------------
+data with AND,OR,NOT operator
+SELECT * FROM student
+WHERE NOT (age>20 OR name="sourabh") AND city="AGRA" 
+----------------------------------------------------------------------------------------------------------------
+IN operator-->
+1)records with age = 21||16||30
+SELECT * FROM student 
+WHERE age IN (21,16,30)
+2)
+SELECT * FROM student
+WHERE age NOT IN (21,16,30)
+----------------------------------------------------------------------------------------------------------------
+BETWEEN operator-->
+1)
+SELECT * FROM student
+WHERE age BETWEEN 16 AND 25---give data between students whose age is =16,=25,between 16 and 25
+2)
+SELECT * FROM student
+WHERE age NOT BETWEEN 16 AND 25
+3) even if we give full name then also it take first letter
+SELECT * FROM student
+WHERE name BETWEEN "r" AND "w"---give data between students whose name starts between r and w
+4)
+SELECT * FROM student
+WHERE birthDate  BETWEEN "1999-08-20" AND "2004-04-25"
+----------------------------------------------------------------------------------------------------------------
+LIKE operator
+SELECT * FROM student
+1) WHERE name LIKE "r%"     //start with r
+2) WHERE name LIKE "%r"     //end with r
+3) WHERE name LIKE "%dh%"      // dh is between
+4) WHERE name LIKE "r%a"        //start with r and end with a
+5) WHERE name LIKE "_a%"    //a at second position
+6) WHERE name LIKE __d%"    //d at third position
+7) WHERE name LIKE _ad%"    //a at second position and d at third position
+----------------------------------------------------------------------------------------------------------------
+select with regular expressions
+SELECT * FROM student
+1) WHERE name REGEXP "av"   //anywhere in string
+2) WHERE name REGEXP "^ra"  // start of string
+3) WHERE name REGEXP "a$"   // end of string
+4)WHERE name REGEXP "sita|krishna"
+5)WHERE name REGEXP "[am]"  check all a and m seperately
+6)WHERE name REGEXP "[am]$"
+6)WHERE name REGEXP "r[am]"
+6)WHERE name REGEXP "[a-m]e"    //ae, be, ce, ...........
+----------------------------------------------------------------------------------------------------------------
+ascending or descending order-->
+SELECT * FROM student
+1) ORDER BY name DESC
+1) ORDER BY age
+
+can apply any condition by WHERE-->
+SELECT * FROM student
+WHERE 
+ORDER BY name DESC
+----------------------------------------------------------------------------------------------------------------
+to get distinct columns
+1) SELECT DISTINCT birthPlace FROM student
+2) SELECT DISTINCT age FROM student
+----------------------------------------------------------------------------------------------------------------
+IS NULL and IS NOT NULL to get any row whose any column is null-->
+SELECT * FROM student
+1) WHERE age IS NOT NULL
+1) WHERE age IS NULL
+----------------------------------------------------------------------------------------------------------------
+select data with limit i.e. to show limited number of data-->
+SELECT * FROM student
+WHERE age>18
+LIMIT 3
+
+next records after 3
+SELECT * FROM student
+WHERE age>18
+LIMIT 2, 2
+----------------------------------------------------------------------------------------------------------------
+Aggregate function-->
+1) SELECT COUNT(DISTINCT age) FROM student
+2) SELECT MAX(age) AS percentage FROM student
+3) SELECT MIN(age) AS percentage FROM student
+4) SELECT SUM(age) AS percentage FROM student
+5) SELECT AVG(age) AS percentage FROM student
+----------------------------------------------------------------------------------------------------------------
+Update existing data -->
+if where not given all rows will update
+
+UPDATE student
+SET age=25
+WHERE id=2
+
+update multiple fields of single row
+SET age=25, phone="98974563210"
+WHERE id=2
+
+update fields of multiple rows
+SET age=25,
+WHERE id IN (2,3)
+----------------------------------------------------------------------------------------------------------------
+COMMIT AND ROLLBACK
+Rollback travels from bottom to top and when it meets with commit it will not revert, 
+COMMANDS ABOVE COMMIT SAVE PERMENTLY
+
+SELECT * FROM student;
+COMMIT;
+UPDATE student SET age=30
+WHERE id=2;
+ROLLBACK;
+----------------------------------------------------------------------------------------------------------------
+DELETE
+DELETE FROM student
+WHERE name='sourabh'
+----------------------------------------------------------------------------------------------------------------
+primary and foreign key-->
+primary-->
+CREATE TABLE city(
+    cid INT NOT NULL AUTO_INCREMENT,
+    cityName VARCHAR(10) NOT NULL,
+    PRIMARY KEY (cityName)
+)
+
+INSERT INTO city(cityName)
+VALUES
+("agra"),
+("delhi"),
+("bombay"),
+("pune"),
+("chennai")
+
+
+foreign-->
+both columns datatype must be same
+CREATE TABLE personal (
+    id INT NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    age INT NOT NULL,
+    city INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (city) REFERENCES city (cid)    //where need to make foreign key and reference of another table column 
+);
+
+IN EXISTING TABLE   
+ALTER TABLE pesonal(
+    ADD PRIMARY KEY (id)
+)
+
+INSERT INTO personal(id,name,age,city)
+VALUES
+(1,"sourabh",24,2),
+(2,"ram",22,3),
+(3,"krishna",34,1),
+(4,"radha",29,2),
+(5,"simbha",18,3),
+(6,"sita",25,4),
+(7,"ragahv",19,2),
+(8,"avi",20,5),
+----------------------------------------------------------------------------------------------------------------
+Inner join or join
+
+it give both tables
+SELECT * FROM personal INNER JOIN city
+ON personal.city=city.cid   // primary key of personal and foreign key of city
+
+allis--shortForm
+SELECT * FROM personal f INNER JOIN city c
+ON f.city=c.cid
+
+to avoid all columns in both table write names instead *-->
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f INNER JOIN city c
+ON f.city=c.cid
+WHERE c.cityName="agra"
+----------------------------------------------------------------------------------------------------------------
+LEFT JOIN (all data from left table and data which matches )-->
+SELECT *
+FROM personal f LEFT JOIN city c
+ON f.city=c.cid
+
+only necessary columns-->
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f LEFT JOIN city c
+ON f.city=c.cid
+
+apply conditions-->
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f LEFT JOIN city c
+ON f.city=c.cid
+WHERE f.age>18
+ORDER BY name
+
+similarly Right joinSELECT f.id, f.name, f.age, c.cityName
+FROM personal f RIGHT JOIN city c
+ON f.city=c.cid
+----------------------------------------------------------------------------------------------------------------
+cross join->join left table with all records of right table-->
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f CROSS JOIN city c
+
+we get same result when we replace CROSS JOIN by ,
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f , city c
+----------------------------------------------------------------------------------------------------------------
+courses table
+CREATE TABLE courses(
+    crid INT NOT NULL AUTO_INCREMENT,
+    course VARCHAR(10) NOT NULL,
+    FOREIGN KEY (crid)
+)
+INSERT INTO courses(course)
+VALUES
+("BTECH"),
+("BSC"),
+("MBB"),
+("PHARMA")
+person table
+CREATE TABLE person (
+    id INT NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    age INT NOT NULL,
+    city INT NOT NULL,
+    courses INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (city) REFERENCES city (cid),
+    FOREIGN KEY (courses) REFERENCES courses (crid)
+);
+
+INSERT INTO person(id,name,age,city)
+VALUES
+(1,"sourabh",24,2,2),
+(2,"ram",22,3,3),
+(3,"krishna",34,1,4),
+(4,"radha",29,2,1),
+(5,"simbha",18,3,1),
+(6,"sita",25,4,2),
+(7,"ragahv",19,2,3),
+(8,"avi",20,5,4)
+
+join multiple tables-->
+SELECT * from person p INNER JOIN city c
+ON p.city=c.cid
+INNER JOIN courses cr
+ON p.courses= cr.crid
+WHERE p.age<25
+----------------------------------------------------------------------------------------------------------------
+Group by claus(e.g-how much times any city repeated -->
+SELECT c.cityName, COUNT(p.city) AS Total
+FROM person p INNER JOIN city c
+ON p.city =c.cid
+GROUP BY city
+HAVING COUNT(p.city)>3
+ORDER BY COUNT(p.city) DESC
+----------------------------------------------------------------------------------------------------------------
+subquery (nested Query) to know which students take BSC course-->
+SELECT name FROM person
+WHERE courses = (SELECT crid FROM courses WHERE course = "BSC")
+for multiple--
+WHERE courses IN (SELECT crid FROM courses WHERE course IN ("BSC","BTECH"))
+
+exists-->
+SELECT name FROM person
+WHERE EXISTS (SELECT crid FROM courses WHERE course = "BSC")
+
+not exists-->
+SELECT name FROM person
+WHERE NOT EXISTS (SELECT crid FROM courses WHERE course = "BS")
+----------------------------------------------------------------------------------------------------------------
+person2 table->>
+CREATE TABLE person2 (
+    id INT NOT NULL,
+    name VARCHAR(30) NOT NULL,
+    age INT NOT NULL,
+    city INT NOT NULL,
+    courses INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (city) REFERENCES city (cid),
+    FOREIGN KEY (courses) REFERENCES courses (crid)
+);
+
+INSERT INTO person2(id,name,age,city,courses)
+VALUES
+(1,"abhi",24,1,3),
+(2,"avinash",22,3,1),
+(3,"sam",34,2,1),
+(4,"rushi",29,1,4),
+
+UNION and UNION ALL -- to combine two records of two tables-->
+UNION--does not show duplicate records
+SELECT name,age FROM person
+UNION
+SELECT name,age FROM person2
+
+UNION ALL--does not show duplicate records
+SELECT * FROM person
+UNION ALL
+SELECT * FROM person2 WHERE age>25
+
+----------------------------------------------------------------------------------------------------------------
+if clause-->Insert column with any condition
+SELECT *,
+IF (age>22,"can vote","can't vote") AS voter
+FROM person
+
+ELSE clause-->Insert column with any condition
+SELECT *,
+CASE
+    WHEN age>=15 AND age <=20 THEN "group1"
+    WHEN age>20 AND age <=25 THEN "group2"
+    WHEN age>25 AND age <=30 THEN "group3"
+    ELSE "over aged"
+END AS group
+FROM person    
+----------------------------------------------------------------------------------------------------------------
+ALTER
+add column in table-->
+ALTER TABLE student
+ADD college VARCHAR(20)
+
+to change position of column-->
+ALTER TABLE student
+MODIFY college VARCHAR(20)
+AFTER NAME
+
+to change datatype-->
+ALTER TABLE student
+MODIFY age VARCHAR(10)
+
+to add constraints-->
+ALTER TABLE student
+ADD UNIQUE (phone)
+
+to give primary key-->
+ALTER TABLE student
+ADD PRIMARY KEY (phone)
+
+rename column name-->
+ALTER TABLE student
+CHANGE college collegeName VARCHAR(40)
+
+rename table name
+ALTER TABLE student
+RENAME students
+
+delete column-->
+ALTER TABLE student
+DROP COLUMN collegeName
+----------------------------------------------------------------------------------------------------------------
+view -- to avoid rewriting of complex commands again and again it is saved permantly in views
+create-->
+CREATE VIEW personInfo
+AS
+SELECT f.id, f.name, f.age, c.cityName
+FROM personal f LEFT JOIN city c
+ON f.city=c.cid
+
+get-->
+SELECT * FROM personInfo
+
+update-->
+ALTER VIEW personInfo
+AS
+SELECT * from person p INNER JOIN city c
+ON p.city=c.cid
+INNER JOIN courses cr
+ON p.courses= cr.crid
+
+---- same can done by ----
+CREATE OR REPLACE personInfo
+AS
+SELECT * from person p INNER JOIN city c
+ON p.city=c.cid
+INNER JOIN courses cr
+ON p.courses= cr.crid
+
+rename-->
+RENAME TABLE personInfo
+TO renamedPersonInfo
+
+delete-->
+DROP VIEW personInfo
+----------------------------------------------------------------------------------------------------------------
+SELECT * FROM students
+WHERE age>22
+create-->
+CREATE INDEX studentAge ON students (age)
+
+show-->
+SHOW INDEX FROM students
+
+delete-->
+DROP INDEX studentAge ON students
+----------------------------------------------------------------------------------------------------------------
